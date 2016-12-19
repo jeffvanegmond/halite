@@ -30,3 +30,6 @@
 
 # build folder
 build/
+
+# Add halite executable
+halite
