@@ -1,3 +1,4 @@
 # Replays and replay folder
 replays/
 *.hlt
+*.log
