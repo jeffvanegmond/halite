@@ -26,19 +26,41 @@ unsigned char findShortestPathToEnemy(const hlt::Location& location, hlt::GameMa
 	int shortest_steps = std::max(map.height, map.width);
 	unsigned char strategy = 0;
 	unsigned char owner = map.getSite(location).owner;
-	for(unsigned char dir = 1; dir <=5; ++dir) {
-		int steps = 0;
-		hlt::Location curr_loc = location;
-		do{
-			++steps;
-			curr_loc = map.getLocation(curr_loc, dir);
-		} while(map.getSite(curr_loc).owner == owner && steps < shortest_steps);
-		if(steps < shortest_steps) {
-			shortest_steps = steps;
-			strategy = dir;
+	//for(unsigned char dir = 1; dir <=5; ++dir) {
+	//	int steps = 0;
+	//	hlt::Location curr_loc = location;
+	//	do{
+	//		++steps;
+	//		curr_loc = map.getLocation(curr_loc, dir);
+	//	} while(map.getSite(curr_loc).owner == owner && steps < shortest_steps);
+	//	if(steps < shortest_steps) {
+	//		shortest_steps = steps;
+	//		strategy = dir;
+	//	}
+	//}
+	//return strategy;
+	float shortest_distance = float(shortest_steps);
+	float angle;
+	for(unsigned short x = 0; x < map.width; ++x) {
+		for(unsigned short y = 0; y < map.height; ++y) {
+			if(map.getSite({x, y}).owner == owner)
+				continue;
+			float distance = map.getDistance(location, {x, y});
+			if(distance < shortest_distance) {
+				shortest_distance = distance;
+				angle = map.getAngle(location, {x, y});
+				h_log::cout << "Angle update: " << angle / M_PI << std::endl;
+			}
 		}
 	}
-	return strategy;
+	h_log::cout << "Angle for shortest: " << angle / M_PI << std::endl;
+	if(std::abs(angle) < M_PI / 4)
+		return EAST;
+	if(-angle < 3 * M_PI / 4 && -angle > M_PI / 4)
+		return NORTH;
+	if( angle < 3 * M_PI / 4 &&  angle > M_PI / 4)
+		return SOUTH;
+	return WEST;
 }
 
 hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned char myID) {
