@@ -54,12 +54,12 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 	unsigned char strategy = 0;
 	bool on_border = hasEnemies(location, map);
 	if(on_border){
-		float best_score = 0;
+		float best_score = -255;
 		int losses = 0;
 		for(unsigned char direction = 1; direction <= 5; ++direction) {
 			hlt::Site destination = map.getSite(location, direction);
 			losses = destination.strength - map.getSite(location).strength;
-			if(destination.owner != myID && losses < best_score) {
+			if(destination.owner != myID && losses < 0 && losses > best_score) {
 				best_score = destination.production/losses;
 				strategy = direction;
 			}
