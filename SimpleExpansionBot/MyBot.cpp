@@ -90,7 +90,7 @@ int main() {
     unsigned char myID;
     hlt::GameMap presentMap;
     getInit(myID, presentMap);
-    sendInit("JeffExpBot v1");
+    sendInit("SimpleExpansionBot");
 
     std::set<hlt::Move> moves;
     while(true) {
