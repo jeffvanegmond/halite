@@ -36,11 +36,9 @@ unsigned char findShortestPathToEnemy(const hlt::Location& location, hlt::GameMa
 			if(distance < shortest_distance) {
 				shortest_distance = distance;
 				angle = map.getAngle(location, {x, y});
-				h_log::cout << "Angle update: " << angle / M_PI << std::endl;
 			}
 		}
 	}
-	h_log::cout << "Angle for shortest: " << angle / M_PI << std::endl;
 	if(std::abs(angle) < M_PI / 4)
 		return EAST;
 	if(-angle < 3 * M_PI / 4 && -angle > M_PI / 4)
