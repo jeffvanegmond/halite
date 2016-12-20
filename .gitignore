@@ -37,3 +37,7 @@ halite
 *.log
 replays/
 logs/
+
+# Archives
+*.zip
+*.gz
