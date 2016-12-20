@@ -178,14 +178,16 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 int main() {
 	srand(time(NULL));
 
-	h_log::cout.open("game.log");
-	h_log::cout << " ===== STARTING GAME =====" << std::endl;
 	
 	std::cout.sync_with_stdio(0);
 
 	unsigned char myID;
 	hlt::GameMap presentMap;
 	getInit(myID, presentMap);
+	std::string filename = "game-";
+	filename += std::to_string(int(myID)) + ".log";
+	h_log::cout.open(filename, std::fstream::out);
+	h_log::cout << " ===== STARTING GAME =====" << std::endl;
 	sendInit("JeffExpBot v1");
 
 	std::set<hlt::Move> moves;
