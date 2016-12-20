@@ -15,7 +15,7 @@ namespace h_log {
 
 bool hasEnemies(const hlt::Location& location, hlt::GameMap& map) {
 	unsigned char owner = map.getSite(location).owner;
-	for(unsigned char dir = 1; dir <= 5; ++dir) {
+	for(unsigned char dir = 1; dir < 5; ++dir) {
 		if(map.getSite(location, dir).owner != owner)
 			return true;
 	}

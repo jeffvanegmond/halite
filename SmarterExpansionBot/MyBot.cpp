@@ -15,7 +15,7 @@ namespace h_log {
 
 bool hasEnemies(const hlt::Location& location, hlt::GameMap& map) {
 	unsigned char owner = map.getSite(location).owner;
-	for(unsigned char dir = 1; dir <= 5; ++dir) {
+	for(unsigned char dir = 1; dir < 5; ++dir) {
 		if(map.getSite(location, dir).owner != owner)
 			return true;
 	}
@@ -56,7 +56,7 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 	if(on_border){
 		float best_score = -255;
 		int losses = 0;
-		for(unsigned char direction = 1; direction <= 5; ++direction) {
+		for(unsigned char direction = 1; direction < 5; ++direction) {
 			hlt::Site destination = map.getSite(location, direction);
 			losses = destination.strength - map.getSite(location).strength;
 			if(destination.owner != myID && losses < 0 && destination.production/losses > best_score) {

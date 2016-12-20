@@ -15,7 +15,7 @@ namespace h_log {
 
 bool hasEnemies(const hlt::Location& location, hlt::GameMap& map) {
 	unsigned char owner = map.getSite(location).owner;
-	for(unsigned char dir = 1; dir <= 5; ++dir) {
+	for(unsigned char dir = 1; dir < 5; ++dir) {
 		if(map.getSite(location, dir).owner != owner)
 			return true;
 	}
@@ -56,13 +56,13 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 	if(on_border){
 		float best_score = -255;
 		int losses = 0;
-		for(unsigned char direction = 1; direction <= 5; ++direction) {
+		for(unsigned char direction = 1; direction < 5; ++direction) {
 			hlt::Location destination_location = map.getLocation(location, direction);
 			hlt::Site destination = map.getSite(destination_location);
 			losses = destination.strength - map.getSite(location).strength;
 			if(losses >= 0)
 				continue; // Note, due to overkill, it may be smart to actually attack a square we're not winning. Future investigation
-			for(unsigned char ok_direction = 1; ok_direction <= 5; ++ok_direction) {
+			for(unsigned char ok_direction = 1; ok_direction < 5; ++ok_direction) {
 				hlt::Site surrounding = map.getSite(destination_location, ok_direction);
 				if(surrounding.owner != myID && surrounding.owner != 0) {
 					losses -= surrounding.strength;
