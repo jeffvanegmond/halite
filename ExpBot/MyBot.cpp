@@ -57,9 +57,18 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 		float best_score = -255;
 		int losses = 0;
 		for(unsigned char direction = 1; direction <= 5; ++direction) {
-			hlt::Site destination = map.getSite(location, direction);
+			hlt::Location destination_location = map.getLocation(location, direction);
+			hlt::Site destination = map.getSite(destination_location);
 			losses = destination.strength - map.getSite(location).strength;
-			if(destination.owner != myID && losses < 0 && losses > best_score) {
+			if(losses >= 0)
+				continue; // Note, due to overkill, it may be smart to actually attack a square we're not winning. Future investigation
+			for(unsigned char ok_direction = 1; ok_direction <= 5; ++ok_direction) {
+				hlt::Site surrounding = map.getSite(destination_location, ok_direction);
+				if(surrounding.owner != myID && surrounding.owner != 0) {
+					losses -= surrounding.strength;
+				}
+			}
+			if(destination.owner != myID && destination.production/losses > best_score) {
 				best_score = destination.production/losses;
 				strategy = direction;
 			}
