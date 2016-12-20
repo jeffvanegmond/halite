@@ -59,7 +59,7 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 		for(unsigned char direction = 1; direction <= 5; ++direction) {
 			hlt::Site destination = map.getSite(location, direction);
 			losses = destination.strength - map.getSite(location).strength;
-			if(destination.owner != myID && losses < 0 && losses > best_score) {
+			if(destination.owner != myID && losses < 0 && destination.production/losses > best_score) {
 				best_score = destination.production/losses;
 				strategy = direction;
 			}
