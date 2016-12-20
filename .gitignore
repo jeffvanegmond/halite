@@ -35,3 +35,5 @@ build/
 halite
 *.hlt
 *.log
+replays/
+logs/
