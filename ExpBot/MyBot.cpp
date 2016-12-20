@@ -26,19 +26,6 @@ unsigned char findShortestPathToEnemy(const hlt::Location& location, hlt::GameMa
 	int shortest_steps = std::max(map.height, map.width);
 	unsigned char strategy = 0;
 	unsigned char owner = map.getSite(location).owner;
-	//for(unsigned char dir = 1; dir <=5; ++dir) {
-	//	int steps = 0;
-	//	hlt::Location curr_loc = location;
-	//	do{
-	//		++steps;
-	//		curr_loc = map.getLocation(curr_loc, dir);
-	//	} while(map.getSite(curr_loc).owner == owner && steps < shortest_steps);
-	//	if(steps < shortest_steps) {
-	//		shortest_steps = steps;
-	//		strategy = dir;
-	//	}
-	//}
-	//return strategy;
 	float shortest_distance = float(shortest_steps);
 	float angle;
 	for(unsigned short x = 0; x < map.width; ++x) {
@@ -103,7 +90,7 @@ int main() {
     unsigned char myID;
     hlt::GameMap presentMap;
     getInit(myID, presentMap);
-    sendInit("MyC++Bot");
+    sendInit("JeffExpBot v1");
 
     std::set<hlt::Move> moves;
     while(true) {
