@@ -31,5 +31,7 @@
 # build folder
 build/
 
-# Add halite executable
+# Halite executable, replays and logs
 halite
+*.hlt
+*.log
