@@ -8,6 +8,7 @@
 
 #include "hlt.hpp"
 #include "networking.hpp"
+#include "helpers.hpp"
 
 namespace h_log {
 	std::fstream cout;
