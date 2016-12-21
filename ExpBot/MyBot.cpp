@@ -151,7 +151,8 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 		}
 	}
 
-	if(best_help_turns < best_turns_to_capture && best_help_turns <= 3) {
+	int max_help_turns = 5;
+	if(best_help_turns < best_turns_to_capture && best_help_turns <= max_help_turns) {
 		h_log::cout << "I can help the square in direction " << int(help_direction) << " to capture a square in " << int(best_help_turns) << " turns." << std::endl;
 		h_log::cout << "Let's see if they can also help me. We don't want to switch places and waste time, right?" << std::endl;
 		hlt::Location help_location = map.getLocation(location, help_direction);
@@ -163,7 +164,7 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, unsigned ch
 		if(defect > 0) {
 			helped_turns += defect / (map.getSite(location).production + help_site.strength);
 		}
-		if(helped_turns < best_help_turns) {
+		if(helped_turns <= max_help_turns) {
 			h_log::cout << "The site I want to help is likely going to help me, so let's stay put."  << std::endl;
 			return {location, STILL};
 		}
