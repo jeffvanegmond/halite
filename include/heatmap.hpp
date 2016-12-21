@@ -16,6 +16,36 @@ class HeatMap {
 			}
 		}
 	}
+
+	hlt::Location hottest() {
+		float hottest = -255.f;
+		hlt::Location hot_loc = {0,0};
+		for(size_t i = 0; i < heat.size(); ++i) {
+			for(size_t j = 0; j < heat[i].size(); ++j) {
+				if(heat[i][j] > hottest) {
+					hottest = heat[i][j];
+					hot_loc.x = i;
+					hot_loc.y = j;
+				}
+			}
+		}
+		return hot_loc;
+	}
+
+	hlt::Location coldest() {
+		float coldest = 255.f;
+		hlt::Location cold_loc = {0,0};
+		for(size_t i = 0; i < heat.size(); ++i) {
+			for(size_t j = 0; j < heat[i].size(); ++j) {
+				if(heat[i][j] < coldest) {
+					coldest = heat[i][j];
+					cold_loc.x = i;
+					cold_loc.y = j;
+				}
+			}
+		}
+		return cold_loc;
+	}
 };
 
 template <typename Heat>
