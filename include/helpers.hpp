@@ -3,11 +3,6 @@
 
 #include <vector>
 
-//bool hasEnemies(const hlt::Location& location, hlt::GameMap& map, bool include_map=true) {
-//
-//}
-
-
 template<typename HeatCalculator>
 class HeatMap {
 	std::vector<std::vector<float>> heat;
