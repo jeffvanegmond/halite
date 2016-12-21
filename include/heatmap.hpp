@@ -45,14 +45,34 @@ class RegionHeatCalculator {
 };
 
 template <typename Heat1, typename Heat2>
-class CombinedHeatCalculator {
+class SummedHeatCalculator {
 	Heat1 h1;
 	Heat2 h2;
 	float w1, w2;
-	CombinedHeatCalculator(Heat1 h1, Heat2 h2) : h1(h1), h2(h2), w1(1.f), w2(1.f) {}
-	CombinedHeatCalculator(Heat1 h1, Heat2 h2, float w1, float w2) : h1(h1), h2(h2), w1(w1), w2(w2) {}
+	SummedHeatCalculator(Heat1 h1, Heat2 h2) : h1(h1), h2(h2), w1(1.f), w2(1.f) {}
+	SummedHeatCalculator(Heat1 h1, Heat2 h2, float w1, float w2) : h1(h1), h2(h2), w1(w1), w2(w2) {}
 	float operator() (hlt::GameMap& map, hlt::Location loc) {
 		return w1 * h1(map, loc) + w2 * h2(map, loc);
+	}
+};
+
+template <typename Heat1, typename Heat2>
+class MultipliedHeatCalculator {
+	Heat1 h1;
+	Heat2 h2;
+	MultipliedHeatCalculator(Heat1 h1, Heat2 h2) : h1(h1), h2(h2) {}
+	float operator() (hlt::GameMap& map, hlt::Location loc) {
+		return h1(map, loc) * h2(map, loc);
+	}
+};
+
+template <typename Heat1, typename Heat2>
+class RatioHeatCalculator {
+	Heat1 h1;
+	Heat2 h2;
+	RatioHeatCalculator(Heat1 h1, Heat2 h2) : h1(h1), h2(h2) {}
+	float operator() (hlt::GameMap& map, hlt::Location loc) {
+		return h1(map, loc) / h2(map, loc);
 	}
 };
 
