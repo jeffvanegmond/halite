@@ -5,6 +5,7 @@
 
 template<typename HeatCalculator>
 class HeatMap {
+public:
 	std::vector<std::vector<float>> heat;
 	HeatMap() {}
 
@@ -50,6 +51,7 @@ class HeatMap {
 
 template <typename Heat>
 class RegionHeatCalculator {
+public:
 	unsigned short region;
 	Heat h;
 	RegionHeatCalculator(unsigned short region_size, Heat h) : region(region_size), h(h) {}
@@ -76,6 +78,7 @@ class RegionHeatCalculator {
 
 template <typename Heat1, typename Heat2>
 class SummedHeatCalculator {
+public:
 	Heat1 h1;
 	Heat2 h2;
 	float w1, w2;
@@ -88,6 +91,7 @@ class SummedHeatCalculator {
 
 template <typename Heat1, typename Heat2>
 class MultipliedHeatCalculator {
+public:
 	Heat1 h1;
 	Heat2 h2;
 	MultipliedHeatCalculator(Heat1 h1, Heat2 h2) : h1(h1), h2(h2) {}
@@ -98,38 +102,34 @@ class MultipliedHeatCalculator {
 
 template <typename Heat1, typename Heat2>
 class RatioHeatCalculator {
+public:
 	Heat1 h1;
 	Heat2 h2;
 	RatioHeatCalculator(Heat1 h1, Heat2 h2) : h1(h1), h2(h2) {}
 	float operator() (hlt::GameMap& map, hlt::Location loc) {
-		return h1(map, loc) / h2(map, loc);
+		float v2 = h2(map, loc);
+		if(v2 == 0) 
+			return 255.f;
+		return h1(map, loc) / v2;
 	}
 };
 
 class ProductionHeatCalculator {
+public:
 	float operator() (hlt::GameMap& map, hlt::Location loc) {
 		return float(map.getSite(loc).production);
 	}
 };
 
 class StrengthHeatCalculator {
+public:
 	float operator() (hlt::GameMap& map, hlt::Location loc) {
 		return float(map.getSite(loc).strength);
 	}
 };
 
-class ProductionRatioHeatCalculator {
-	float operator() (hlt::GameMap& map, hlt::Location loc) {
-		hlt::Site s = map.getSite(loc);
-		if(s.production == 0)
-			return 0.f;
-		if(s.strength == 0)
-			return 255.f;
-		return float(s.production) / float(s.strength);
-	}
-};
-
 class DistanceHeatCalculator {
+public:
 	hlt::Location cloc;
 	DistanceHeatCalculator(hlt::Location loc) : cloc(loc) {}
 	float operator() (hlt::GameMap& map, hlt::Location loc) {
@@ -139,11 +139,13 @@ class DistanceHeatCalculator {
 
 template <typename Heat>
 class OwnedHeatCalculator {
+public:
 	unsigned char owner;
-	float default_value;
 	Heat h;
-	OwnedHeatCalculator(unsigned char owner, Heat h) : owner(owner), h(h), default_value(0.f) {}
-	OwnedHeatCalculator(unsigned char owner, Heat h, float def) : owner(owner), h(h), default_value(def) {}
+	bool is_owned;
+	float default_value;
+	OwnedHeatCalculator(unsigned char owner, Heat h, bool is_owned) : owner(owner), h(h), is_owned(is_owned), default_value(0.f) {}
+	OwnedHeatCalculator(unsigned char owner, Heat h, bool is_owned, float def) : owner(owner), h(h), is_owned(is_owned), default_value(def) {}
 	float operator() (hlt::GameMap& map, hlt::Location loc) {
 		if(map.getSite(loc).owner == owner)
 			return h(map, loc);

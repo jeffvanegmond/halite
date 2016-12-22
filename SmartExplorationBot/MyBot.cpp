@@ -8,10 +8,15 @@
 
 #include "hlt.hpp"
 #include "networking.hpp"
+#include "heatmap.hpp"
 
 namespace h_log {
 	std::fstream cout;
 }
+
+typedef struct {
+	HeatMap<OwnedHeatCalculator<RegionHeatCalculator<RatioHeatCalculator<ProductionHeatCalculator, StrengthHeatCalculator>>>> production_hotspots;
+} Data;
 
 bool hasEnemies(const hlt::Location& location, hlt::GameMap& map) {
 	unsigned char owner = map.getSite(location).owner;
@@ -99,6 +104,15 @@ int main() {
     unsigned char myID;
     hlt::GameMap presentMap;
     getInit(myID, presentMap);
+
+	unsigned short region_size = 3;
+	ProductionHeatCalculator phc;
+	StrengthHeatCalculator shc;
+	RegionHeatCalculator<ProductionHeatCalculator> rphc{region_size, phc};
+	RegionHeatCalculator<StrengthHeatCalculator> rshc{region_size, shc};
+	RatioHeatCalculator<RegionHeatCalculator<ProductionHeatCalculator>, RegionHeatCalculator<StrengthHeatCalculator>> psrhc{rphc, rshc};
+	OwnedHeatCalculator<RatioHeatCalculator<RegionHeatCalculator<ProductionHeatCalculator>, RegionHeatCalculator<StrengthHeatCalculator>> opsrhc{0, psrhc, true};
+
     sendInit("JeffOverkillBot v1");
 
     std::set<hlt::Move> moves;
@@ -106,6 +120,7 @@ int main() {
         moves.clear();
 
         getFrame(presentMap);
+
 
         for(unsigned short a = 0; a < presentMap.height; a++) {
             for(unsigned short b = 0; b < presentMap.width; b++) {
