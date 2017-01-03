@@ -103,7 +103,7 @@ struct StrengthCostDistance {
 	StrengthCostDistance(GameMap& map) : map(&map) {}
 	float operator()(Location& from, Location& to) {
 		if(map->getSite(to).owner == map->getSite(from).owner)
-			return 1;
+			return map->getSite(from).production;
 		return map->getSite(to).strength;
 	}
 };
