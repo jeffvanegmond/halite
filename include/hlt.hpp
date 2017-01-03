@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include <random>
+#include <ostream>
 
 #define STILL 0
 #define NORTH 1
@@ -26,6 +27,9 @@ namespace hlt{
     }
     static bool operator!=(const Location& a, const Location& b) {
         return a.x != b.x || a.y != b.y;
+    }
+    static std::ostream& operator<<(std::ostream& lhs, const Location& rhs) {
+        return lhs << "[" << rhs.x << ", " << rhs.y << "]";
     }
     typedef std::vector<Location> Locations;
 
