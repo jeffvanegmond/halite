@@ -21,6 +21,13 @@ namespace hlt{
     static bool operator<(const Location& l1, const Location& l2) {
         return ((l1.x + l1.y)*((unsigned int)l1.x + l1.y + 1) / 2) + l1.y < ((l2.x + l2.y)*((unsigned int)l2.x + l2.y + 1) / 2) + l2.y;
     }
+    static bool operator==(const Location& a, const Location& b) {
+        return a.x == b.x && a.y == b.y;
+    }
+    static bool operator!=(const Location& a, const Location& b) {
+        return a.x != b.x || a.y != b.y;
+    }
+    typedef std::vector<Location> Locations;
 
     struct Site{
         unsigned char owner;
@@ -107,6 +114,13 @@ namespace hlt{
     static bool operator<(const Move& m1, const Move& m2) {
         unsigned int l1Prod = ((m1.loc.x + m1.loc.y)*((unsigned int)m1.loc.x + m1.loc.y + 1) / 2) + m1.loc.y, l2Prod = ((m2.loc.x + m2.loc.y)*((unsigned int)m2.loc.x + m2.loc.y + 1) / 2) + m2.loc.y;
         return ((l1Prod + m1.dir)*(l1Prod + m1.dir + 1) / 2) + m1.dir < ((l2Prod + m2.dir)*(l2Prod + m2.dir + 1) / 2) + m2.dir;
+    }
+
+    void getNeighbors(Location& loc, GameMap& map, Locations& neighbors) {
+        neighbors.clear();
+        for(int i : CARDINALS) {
+            neighbors.push_back(map.getLocation(loc, i));
+        }
     }
 }
 
