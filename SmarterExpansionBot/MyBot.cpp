@@ -17,7 +17,7 @@ namespace h_log {
 struct Data {
 	unsigned short turn = 0;
 	unsigned char myID;
-	unsigned short neighborhood = 2;
+	unsigned short neighborhood = 1;
 	std::map<hlt::Location, float> interest;
 	hlt::LocationQueue sorted_interest;
 	hlt::LocationQueue my_locations;
@@ -51,18 +51,24 @@ void prepData(hlt::GameMap& map, Data& data) {
 
 			// Then scan down and right
 			hlt::Location curr_loc_column = curr_loc;
-			int strength = 1; // Start this at 1 to prevent division by zero. It shouldn't affect the end result much.
-			int production = 0;
-			unsigned short region = data.neighborhood * 2 + 1;
-			for(unsigned short i = 0; i < region; ++i) {
-				for(unsigned short j = 0; j < region; ++j) {
-					strength += map.getSite(curr_loc).strength;
-					production += map.getSite(curr_loc).production;
-					curr_loc = map.getLocation(curr_loc, SOUTH);
-//					h_log::cout << "-- Evaluated all the way to: " << curr_loc << std::endl;;
+			int strength = map.getSite(l).strength + 1; // Start this at minimum to prevent division by zero. It shouldn't affect the end result much.
+			int production = map.getSite(l).production;
+			if(data.neighborhood > 0) {
+				strength = 1; // Start this at minimum to prevent division by zero. It shouldn't affect the end result much.
+				production = 0;
+				unsigned short region = data.neighborhood * 2 + 1;
+				for(unsigned short i = 0; i < region; ++i) {
+					for(unsigned short j = 0; j < region; ++j) {
+						if(map.getSite(curr_loc).owner != data.myID) {
+							strength += map.getSite(curr_loc).strength;
+							production += map.getSite(curr_loc).production;
+						}
+						curr_loc = map.getLocation(curr_loc, SOUTH);
+//						h_log::cout << "-- Evaluated all the way to: " << curr_loc << std::endl;;
+					}
+					curr_loc_column = map.getLocation(curr_loc_column, EAST);
+					curr_loc = curr_loc_column;
 				}
-				curr_loc_column = map.getLocation(curr_loc_column, EAST);
-				curr_loc = curr_loc_column;
 			}
 
 			data.interest[l] = float(production) / float(strength);
@@ -149,7 +155,21 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, Data& data)
 //	return { location , strategy };
 
 	h_log::cout << ". Finding a path for " << location << std::endl;
-	hlt::Location goal = data.sorted_interest.top().first;
+	hlt::LocationQueue local_targets = data.sorted_interest;
+	hlt::Location goal = local_targets.top().first;
+	hlt::Location interim_goal;
+	float distance = 255.;
+	while(distance > 5 && !local_targets.empty()) {
+		interim_goal = local_targets.top().first;
+		distance = map.getDistance(location, interim_goal);
+		local_targets.pop();
+	}
+	if(!local_targets.empty())
+		goal = interim_goal;
+	h_log::cout << ".. I decided that " << goal << " is my best target." << std::endl;
+	if(goal != data.sorted_interest.top().first) {
+		h_log::cout << "... AND I KNOW that is not the most interesting target on the map!" << std::endl;
+	}
 	std::vector<unsigned char> path;
 	hlt::MapDistance d{map};
 	hlt::MapDistance h{map};
@@ -161,7 +181,7 @@ hlt::Move makeMove(const hlt::Location& location, hlt::GameMap& map, Data& data)
 	hlt::Site step_site = map.getSite(step_location);
 	hlt::Site loc_site = map.getSite(location);
 	if(step_site.owner != data.myID && step_site.strength <= loc_site.strength) {
-		h_log::cout << ".. My target is hostile and I'm taking it." << std::endl;
+		h_log::cout << ".. My target is neutral and I'm taking it." << std::endl;
 		return {location, path[0]};
 	}
 
