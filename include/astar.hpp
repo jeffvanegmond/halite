@@ -15,16 +15,13 @@ typedef std::pair<Location, float> LocationPriority;
 typedef std::priority_queue<LocationPriority> LocationQueue;
 
 bool operator<(const LocationPriority& a, const LocationPriority& b) {
-	return a.first < b.first;
+	return a.second < b.second;
 }
 
-
-
-
 template<typename DistanceType, typename Heuristic>
-void findPath(Location& start, Location& goal, GameMap& map, DistanceType& d, Heuristic& h, std::vector<int>& path, float ignore_threshold = DEFAULT_INVALID) {
+void findPath(Location start, Location goal, GameMap& map, DistanceType& d, Heuristic& h, std::vector<unsigned char>& path, float ignore_threshold = DEFAULT_INVALID) {
 	LocationQueue frontier;
-	frontier.push(std::make_pair(start, 0));
+	frontier.push(std::make_pair(start, 0.));
 	std::map<Location, int> came_from;
 	std::map<Location, float> cost_so_far;
 	came_from[start] = 0;
@@ -44,15 +41,16 @@ void findPath(Location& start, Location& goal, GameMap& map, DistanceType& d, He
 		Location next;
 		for(int next_dir : CARDINALS) {
 			next = map.getLocation(current.first, next_dir);
-			LocationPriority lp = std::make_pair(next, 0);
+			LocationPriority lp = std::make_pair(next, 0.);
 			float dist = d(current.first, next);
 			if(dist > ignore_threshold)
 				continue;
 			lp.second = cost_so_far[current.first] + dist;
 
-			if(cost_so_far.count(next) == 0 || cost_so_far[next] >= lp.second) {
+			if(cost_so_far.count(next) == 0 || cost_so_far[next] > lp.second) {
 				cost_so_far[next] = lp.second;
 				lp.second += h(goal, next);
+				lp.second *= -1.;
 				frontier.push(lp);
 				came_from[next] = oppositeCardinal(next_dir);
 			}
@@ -97,6 +95,16 @@ struct EuclideanDistance {
 	EuclideanDistance(GameMap& map) : map(&map) {}
 	float operator()(Location& from, Location& to) {
 		return map->getEuclideanDistance(from, to);
+	}
+};
+
+struct StrengthCostDistance {
+	GameMap* map;
+	StrengthCostDistance(GameMap& map) : map(&map) {}
+	float operator()(Location& from, Location& to) {
+		if(map->getSite(to).owner == map->getSite(from).owner)
+			return 1;
+		return map->getSite(to).strength;
 	}
 };
 
