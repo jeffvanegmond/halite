@@ -108,4 +108,10 @@ struct StrengthCostDistance {
 	}
 };
 
+struct ZeroDistance {
+	float operator()(Location& from, Location& to) {
+		return 0;
+	}
+};
+
 }
