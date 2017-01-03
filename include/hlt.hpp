@@ -122,6 +122,10 @@ namespace hlt{
             neighbors.push_back(map.getLocation(loc, i));
         }
     }
+
+    int oppositeCardinal(int cardinal) {
+        return ((cardinal + 1) % 4) + 1;
+    }
 }
 
 #endif
